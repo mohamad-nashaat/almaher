@@ -1,0 +1,86 @@
+{% extends 'base_card_dml.html'%}
+
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block pg_head %}
+    اضافة مدرس
+{% endblock %}
+
+{% block card_body %}
+    <form class="user" action="{% url 'add_teacher' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="fname" name="fname"
+                    placeholder="الاسم" required >
+            </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control form-control-user" id="lname" name="lname"
+                    placeholder="الكنية" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="father_name" name="father_name"
+                    placeholder="اسم الاب" required>
+            </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control form-control-user" id="job" name="job"
+                    placeholder="العمل" required>
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="pnumber" name="pnumber"
+                    placeholder="رقم الموبايل" required>
+            </div>
+            <div class="col-sm-6">
+                <input type="text" class="form-control form-control-user" id="hnumber" name="hnumber"
+                    placeholder="رقم الهاتف" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="address" name="address"
+                    placeholder="العنوان" required>
+            </div>
+            <div class="col-sm-6">
+                <input type="date" class="form-control rounded-pill" id="bdate" name="bdate" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">                
+                <select class="form-control form-select rounded-pill" aria-label="Default select example" name="level" id="level">
+                {% for item in level %}
+                    <option value="{{item.level_name}}"> {{item.level_name}}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-center">
+            <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'teacher'%}">
+                <span>الغاء</span>
+            </a>
+            <input type="submit" value="اضافة" class="btn btn-primary w-25">
+        </div>
+    </form>
+
+    
+{% endblock %}

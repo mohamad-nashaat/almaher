@@ -1,0 +1,67 @@
+{% extends 'base.html'%}
+
+{% block body%}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-success my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'info'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-info my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'error' or message.tags == 'warning' %}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-danger my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% block pg_head %} {% endblock %}</h1>
+        {% block export %}
+
+        {% endblock %}
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            {% block url_1 %}{% endblock %}  
+            
+            {% block url_2 %}{% endblock %}          
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            {% block th_table %}
+
+                            {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% block tr_table%}
+                        
+                        {% endblock %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javaScript%}
+{% endblock %}

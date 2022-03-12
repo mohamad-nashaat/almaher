@@ -1,0 +1,25 @@
+{% extends 'base_card_dml.html'%}
+
+{% block pg_head %}
+    اضافة فترة
+{% endblock %}
+
+{% block card_body %}
+    <form class="user" action="{% url 'add_period' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="col-sm-6 mb-4 mb-sm-0">
+                <label  class="form-label">اسم الفترة</label>
+                <input type="text" class="form-control" name="period_name"
+                    placeholder="اسم الفترة" required>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center p-4">
+            <a type="button" class="btn btn-secondary w-25 mr-4" href="{% url 'period'%}">
+                <span>الغاء</span>
+            </a>
+            <input type="submit" value="اضافة" class="btn btn-primary w-25">
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base_card_dml.html'%}
+
+{% block pg_head %}
+    حذف شخص
+{% endblock %}
+
+{% block card_body %}
+    <form action="{% url 'del_person' person.person_id%}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">الاسم</label>
+            <input type="text" class="form-control" value="{{person.first_name}}"  readonly>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">الكنية</label>
+            <input type="text" class="form-control" value="{{person.last_name}}"  readonly>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">اسم الاب</label>
+            <input type="text" class="form-control" value="{{person.father_name}}"  readonly>
+        </div>
+        <div class="mb-1">
+                <label class="form-label">
+                    اختر "حذف" اذا كنت متأكد من حذف هذا الشخص!
+                </label>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'person'%}">
+                <span>الغاء</span>
+            </a>
+            <button type="submit" class="btn btn-danger w-25 mr-4">حذف</button>
+        </div>
+    </form>
+{% endblock %}

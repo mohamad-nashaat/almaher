@@ -1,0 +1,70 @@
+{% extends 'base_card_dml.html'%}
+
+{% block pg_head %}
+    Edit Person
+{% endblock %}
+
+{% block card_body %}
+    <form action="{% url 'edit_person' person.person_id%}" method="post">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">الاسم</label>
+                    <input type="text" class="form-control" value="{{person.first_name}}" name="fname" required  >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">الكنية</label>
+                    <input type="text" class="form-control" value="{{person.last_name}}" name="lname" required  >
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">اسم الاب</label>
+                    <input type="text" class="form-control" value="{{person.father_name}}" name="father_name" required  >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">تاريخ الميلاد</label>
+                    <input type="date" class="form-control" value="{{person.bdate|date:'Y-m-d'}}" name="bdate" required  >
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">رقم الجوال</label>
+                    <input type="text" class="form-control" value="{{person.phone_number}}" name="pnumber" required  >
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="text" class="form-control" value="{{person.home_number}}" name="hnumber" required  >
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3">
+                    <label class="form-label">العنوان</label>
+                    <input type="text" class="form-control" value="{{person.address}}" name="address" required  >
+                </div>
+                <div class="col-sm-6 mb-4">
+                    <label class="form-label">العمل</label>
+                    <input type="text" class="form-control" value="{{person.job}}" name="job" required  >
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6  mb-3">
+                    <label class="form-label">المستوى</label>
+                    <select class="form-control form-select" aria-label="Default select example" name="level" id="level">
+                    {% if person.level_id %}
+                        <option selected value="{{person.level_id}}">{{person.level_id}}</option>
+                    {% endif %}
+                    {% for item in level %}
+                        <option value="{{item.level_name}}"> {{item.level_name}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <a type="button" class="m-0  btn btn-secondary w-25 mr-4" href="{% url 'person'%}">
+                    <span>الغاء</span>
+                </a>
+                <button type="submit" class="btn btn-primary w-25">حفظ</button>
+            </div>
+        </form>
+{% endblock %}

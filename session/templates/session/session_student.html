@@ -1,0 +1,188 @@
+{% extends 'base.html'%}
+
+{% block body%}
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2">
+            <div class="form-group row my-4">
+                <div class="col-sm-3 mb-3">
+                    {% if f_session.session_id == session.session_id %}
+                        <a href="{% url 'session_student' to_previous %}" class="btn btn-primary disabled">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>السابق</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'session_student' to_previous %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>السابق</span>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="col-sm-6 mb-3">
+                    <form class="user" action="{% url 'session_student' 1 %}" method="post">
+                    {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control mx-2" placeholder=" رقم الجلسة " 
+                                aria-label="Recipient's username" aria-describedby="button-addon2"
+                                id="snumber" name="snumber" min="1" max="{{c_session}}">
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">اذهب</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-3 mb-3">
+                    {% if l_session.session_id == session.session_id %}
+                    <a href="{% url 'session_student' to_next %}" class="btn btn-primary disabled float-left">
+                        <span>التالي</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    {% else %}
+                        <a href="{% url 'session_student' to_next %}" class="btn btn-primary float-left">
+                            <span>التالي</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+        <div class="card-header py-2">
+            <div class="form-group row my-4">
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">رقم الجلسة</label>
+                    <input type="text" value="{{session.session_number}}" class="form-control"  name="count_student_1" readonly>
+                </div>
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المستوى</label>
+                    <input type="text" value="{{session.level_id}}" class="form-control"  name="count_student_1" readonly>
+                </div>
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المكان</label>
+                    <input type="text" value="{{session.position_id}}" class="form-control"  name="count_student_1" readonly>
+                </div>    
+                <div class="col-sm-3 mb-3">
+                    <label class="form-label">المدرس</label>
+                        <select class="form-control form-select" onchange="set_teacher({{session.session_id}})" id="{{session.session_id}}">
+                            {% if session.teacher_id %}
+                                <option selected value="{{session.teacher_id.person_id}}">{{session.teacher_id}}</option>
+                            {% else %}
+                                <option selected value="{{session.teacher_id.person_id}}">{{session.teacher_id}}</option>
+                            {% endif %}
+                            {% for item in teacher %}
+                                {% if session.teacher_id.person_id != item.person_id %}
+                                    <option value="{{item.person_id}}">{{item.first_name}} {{item.last_name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                </div>            
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الكنية</th>
+                            <th>اسم الاب</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>الأولوية</th>
+                            <th>المستوى</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in session_student %}
+                        <tr>
+                            <td>{{item.student_id.person_id}}</td>
+                            <td>{{item.student_id.first_name}}</td>
+                            <td>{{item.student_id.last_name}}</td>
+                            <td>{{item.student_id.father_name}}</td>
+                            <td>{{item.student_id.bdate|date:'Y'}}</td>
+                            <td>{{item.student_id.priority_id}}</td>
+                            <td>{{session.level_id}}</td>
+                            <td>
+                                <a href="{% url 'del_session_student' session.session_id item.id %}" class="btn btn-danger btn-circle btn-sm">
+                                    <i class="fas fa-user-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الكنية</th>
+                            <th>اسم الاب</th>
+                            <th>تاريخ الميلاد</th>
+                            <th>الأولوية</th>
+                            <th>المستوى</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in student %}
+                        <tr>
+                            <td>{{item.person_id}}</td>
+                            <td>{{item.first_name}}</td>
+                            <td>{{item.last_name}}</td>
+                            <td>{{item.father_name}}</td>
+                            <td>{{item.bdate|date:'Y'}}</td>
+                            <td>{{item.priority_id}}</td>
+                            <td>{{item.level_id}}</td>
+                            <td>
+                                <a href="{% url 'add_session_student' session.session_id item.person_id %}" class="btn btn-success btn-circle btn-sm">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    $(document).ready(function() {
+        $('table.display').DataTable();
+    } );
+
+    function set_teacher(get_session_id){
+        let session_id = get_session_id;
+        let teacher_id = document.getElementById(get_session_id).value;
+        $.ajax({
+        url: "{% url 'set_teacher' %}",
+        data:{
+            'session_id':session_id,
+            'teacher_id':teacher_id,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>session teachers pdf</title>
+    <style>
+      body {
+        font-size: 16px;
+      }
+      table,
+      td,
+      th {
+        border: 1px solid black;
+        text-align: center;
+      }
+      table {
+        width: 50%;
+        border-collapse: collapse;
+      }
+      .td-p {
+        padding: 12px;
+      }
+      .w-25 {
+        width: 25%;
+      }
+      .w-20 {
+        width: 20%;
+      }
+      .w-15 {
+        width: 15%;
+      }
+      .w-10 {
+        width: 10%;
+      }
+      .w-5 {
+        width: 5%;
+      }
+      .w-4 {
+        width: 4%;
+      }
+      .w-2 {
+        width: 2%;
+      }
+      @page {
+        size: "A4";
+        margin: 1cm 0.5cm 0.5cm 1cm;
+        size: portrait;
+        @top-right {
+          font-size: 20px;
+          content: "قائمة الطلاب في  {{course_name}}";
+        }
+        @bottom-right {
+          font-size: 12px;
+          content: "Page " counter(page) " of " counter(pages);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <td class="w-10">#</td>
+          <td>الاسم</td>
+          <td class="w-15">الدرس</td>
+          <td class="w-20">المستوى</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in student %}
+        <tr>
+          <td style="font-size: 12px">{{forloop.counter}}</td>
+          <td>{{item.student_id}}</td>
+          <td>{{item.session_id.session_number}}</td>
+          <td>{{item.session_id.level_id}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

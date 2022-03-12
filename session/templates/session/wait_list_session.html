@@ -1,0 +1,59 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    قائمة الانتظار للجلسات
+{% endblock %}
+
+{% block export %}
+
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    <th>اسم الاب</th>
+    <th>تاريخ الميلاد</th>
+    <th>المستوى</th>
+    <th>الدرس</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in student%}
+    <tr>
+        <td>{{item.person_id}}</td>
+        <td>{{item.first_name}}</td>
+        <td>{{item.last_name}}</td>
+        <td>{{item.father_name}}</td>
+        <td>{{item.bdate|date:'Y'}}</td>
+        <td>{{item.level_id}}</td>
+        <td>
+            <select class="form-control form-select" onchange="set_student({{item.person_id}})" id="{{item.person_id}}">
+                <option selected>None</option>
+                {% for item2 in session %}
+                    {% if item2.level_id == item.level_id %}
+                        <option value="{{item2.session_id}}">{{item2.session_number}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_student(std_id){
+        let student_id = std_id;
+        let session_id = document.getElementById(std_id).value;
+        $.ajax({
+        url: "{% url 'set_student' %}",
+        data:{
+            'session_id':session_id,
+            'student_id':student_id,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
+{% endblock %}

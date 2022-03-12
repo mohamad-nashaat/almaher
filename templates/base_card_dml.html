@@ -1,0 +1,31 @@
+{% extends 'base.html'%}
+
+{% block body%}
+
+    {% block mess %}
+
+    {% endblock %}
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% block pg_head %} {% endblock %}</h1>
+        {% block export %}
+
+        {% endblock %}
+    </div>
+
+    <div class="card shadow mb-4">
+        {% block card_header %}
+        {% endblock %}
+        <div class="card-body">
+            {% block card_body %}
+            
+            {% endblock %}
+        </div>
+    </div> 
+
+{% endblock %}
+
+{% block javaScript%}   
+        
+{% endblock %}

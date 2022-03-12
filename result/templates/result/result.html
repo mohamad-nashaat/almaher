@@ -1,0 +1,87 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    النتائج
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_result_excel' %}" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج البيانات لـ Excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4 my-1" href="{% url 'generate_result' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>تحضير النتائج</span>
+    </a>
+{% endblock %}
+
+{% block url_2 %}
+    <a type="button" class="m-0 btn btn-success mr-4 my-1" href="{% url 'student_pass' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>ترحيل الطلاب</span>
+    </a>
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>الطالب</th>
+    <th>الدورة</th>
+    <th>لمستوى</th>
+    <th>الجلسة</th>
+    <th>الحضور</th>
+    <th>علامة النظري</th>
+    <th>علامة العملي</th>
+    <th>المحصلة</th>
+    <th>النتيجة</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in result%}
+    <tr>
+        <td>{{item.student_id.person_id}}</td>
+        <td>{{item.student_id}}</td>
+        <td>{{item.session_id.course_id}}</td>
+        <td>{{item.session_id.level_id}}</td>
+        <td>{{item.session_id.session_number}}</td>
+        <td>{{item.attendance}}</td>
+        <td>{{item.theoretical_mark}}</td>
+        <td>{{item.practical_mark}}</td>
+        <td>{{item.result}}</td>
+        <td>
+            <select class="form-control form-select" onchange="set_result_type({{item.result_id}})" id="{{item.result_id}}">
+                <option selected value="{{item.result_type}}">{{item.result_type}}</option>
+                {% if item.result_type != "ناجح" %}
+                <option value="ناجح">ناجح</option>
+                {% endif %}
+                {% if item.result_type != "نجاح شرطي" %}
+                <option value="نجاح شرطي">نجاح شرطي</option>
+                {% endif %}
+                {% if item.result_type != "إعادة" %}
+                <option value="إعادة">إعادة</option>
+                {% endif %}     
+            </select>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_result_type(r_id){
+        let result_id = r_id;
+        let result_type = document.getElementById(r_id).value;
+        $.ajax({
+        url: "{% url 'set_result_type' %}",
+        data:{
+            'result_id': result_id,
+            'result_type': result_type,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
+{% endblock %}

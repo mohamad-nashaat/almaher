@@ -1,0 +1,86 @@
+{% extends 'base_datatables.html'%}
+
+{% block mess %}
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block pg_head %}
+    حضور المدرسين
+{% endblock %}
+
+{% block th_table %}
+    <th>رقم الدرس</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    {% for item in day_attendance %}
+        <th>{{item}}</th>
+    {% endfor %}
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in attendance %}
+    <tr>
+        <td>{{item.session_number}}</td>
+        <td>{{item.first_name}}</td>
+        <td>{{item.last_name}}</td>
+        <!--Get studet _d then list status day-->
+        {% for day, id in item.zip_id_day %}
+                {% if day == True %}
+                    <td>
+                        <div class="form-check">
+                            <div class="d-flex justify-content-center">
+                                <input class="form-check-input" onclick="to_false({{id}})" type="checkbox" value="" checked>
+                            </div>
+                        </div>
+                    </td>
+                {% else %}
+                    <td>
+                        <div class="form-check">
+                            <div class="d-flex justify-content-center">
+                                <input class="form-check-input" onclick="to_true({{id}})" type="checkbox" value="">
+                            </div>
+                        </div>
+                        </a>
+                    </td>
+                {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block javaScript%}
+    <script>
+        function to_true(x){
+            let attendance_id = x;
+            $.ajax({
+            url: "{% url 'change_status_true' %}",
+            data:{
+                'attendance_id':attendance_id
+                },
+            dataType: 'json',
+            });
+        };
+        function to_false(x){
+            let attendance_id = x;
+            $.ajax({
+            url: "{% url 'change_status_false' %}",
+            data:{
+                'attendance_id':attendance_id
+                },
+            dataType: 'json',
+            });
+        };
+    </script>
+{% endblock %}
+
+    

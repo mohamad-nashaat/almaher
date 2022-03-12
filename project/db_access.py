@@ -1,0 +1,5 @@
+db_name = 'almaher'
+user_name = 'postgres'
+password = 'sys'
+host = 'localhost'
+port = '5432'

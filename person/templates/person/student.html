@@ -1,0 +1,94 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    الطلاب
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_excel_student' %}" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج البيانات لـ Excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4" href="{% url 'add_student' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>اضافة طالب</span>
+    </a>
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    <th>اسم الاب</th>
+    <th>تاريخ الميلاد</th>
+    <th>المستوى</th>
+    <th>الاولوية</th>
+    <th>الحالة</th>
+    <th>تعديل</th>
+    <th>حذف</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in student%}
+    <tr>
+        <td>{{item.person_id}}</td>
+        <td>{{item.first_name}}</td>
+        <td>{{item.last_name}}</td>
+        <td>{{item.father_name}}</td>
+        <td>{{item.bdate|date:'Y'}}</td>
+        <td>{{item.level_id}}</td>
+        <td>
+            <select class="form-control form-select" onchange="set_priority({{item.person_id}})" id="{{item.person_id}}">
+                <option selected value="{{item.priority_id}}">{{item.priority_id}}</option>
+                {% if item.priority_id != "مستمر" %}
+                <option  value="مستمر">مستمر</option>
+                {% else %}
+                <option value="غير معروف">غير معروف</option>
+                {% endif %}
+            </select>
+        </td>
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'lock_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                    <i class="fas fa-lock"></i>
+                </a>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'edit_person' item.person_id %}" class="btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'del_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                    <i class="fas fa-user-times"></i>
+                </a>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_priority(std_id){
+        let student_id = std_id;
+        let priority_id = document.getElementById(std_id).value;
+        $.ajax({
+        url: "{% url 'set_priority' %}",
+        data:{
+            'priority_id':priority_id,
+            'student_id':student_id,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
+{% endblock %}

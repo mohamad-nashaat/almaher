@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>session pdf</title>
+    <style>
+        body{
+            font-size: 16px;
+        }
+        table, td, th {
+            border: 1px solid black;
+            text-align: center;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .td-p{
+            padding: 12px;
+        }
+        .clear {
+        clear: both;
+        }
+        .clear div {
+            width: 20%;
+            display: inline-block;
+        }
+        #col1 {
+            float: right;
+        }
+        div{
+            margin-bottom: 16px;
+        }
+        .table-2{
+            position: fixed;
+            bottom: 0;
+        }
+        .w-25{
+            width: 25%;
+        }
+        .w-5{
+            width: 5%;
+        }
+        .w-4{
+            width: 4%;
+        }
+        .w-2{
+            width: 2%;
+        }
+        .checkbox{
+            text-align: center;
+        }
+        .checkbox_box{
+            border: 1px solid black;
+            height: 16px;
+            width: 16px;
+            display: inline-block;
+        }
+        p{
+            margin: 0px;
+            padding: 1px;
+            font-weight: 900;
+        }
+        @page {
+        size: "A4";
+        margin: 2cm 1.5cm 1.5cm 1.5cm;
+        size: landscape;
+            @top-center {
+                font-size: 20px;
+                content: "{{course_name}}";
+            }
+            @bottom-right {
+                font-size: 12px;
+                content: "Page " counter(page) " of " counter(pages); 
+            }
+        }
+    </style>
+  </head>
+  <body>
+        {% for item in last_session %}
+        <div class="clear">
+            <div id="col1">رقم الدرس: {{item.teach.session_number}}</div>
+            <div id="col1">المدرس: {{item.teach.teacher_id}}</div>
+            <div id="col1">المستوى: {{item.teach.level_id}}</div>
+            <div id="col1">المكان: {{item.teach.position_id}}</div>
+            <div id="col1">التوقيت: {{item.teach.time_id}}</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <td>الاسم</td>
+                    {% for att_day in day %}
+                        <td class="w-4" style="font-size: 12px;">{{att_day}}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item2 in item.stud %}
+                    <tr>
+                        <td>{{item2.student.student_id}}</td>
+                        {% for item3 in item2.attendance %}
+                            {% if item3.status == True %}
+                                <td class="checkbox">
+                                    <p class="checkbox_box">&#10003;</p>
+                                </td>
+                            {% elif item3.status == False %}
+                                <td class="checkbox">
+                                    <p class="checkbox_box"></p>
+                                </td>
+                            {% else %}
+                                <td></td> 
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+                {% for i in '1234'|make_list %}
+                <tr>
+                    {% for i in num_of_session_list %}
+                        <td class="td-p"></td>
+                    {% endfor %}
+                    {% for i in '1234'|make_list %}
+                        <td class="td-p"></td> 
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table-2">
+            <thead>
+                <tr>
+                    <td class="w-25">التاريخ</td>
+                    <td>الملاحظات</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in '012'|make_list %}
+                <tr>
+                    <td class="td-p"></td>
+                    <td class="td-p"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="page-break-after: always" ></p>
+        {% endfor %}
+  </body>
+</html>

@@ -1,0 +1,80 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    الاشخاص
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_excel_person' %}" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج البيانات لـ Excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>النوع</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    <th>اسم الاب</th>
+    <th>تاريخ الميلاد</th>
+    <th>رقم الموبايل</th>
+    <th>رقم الهاتف</th>
+    <th>العنوان</th>
+    <th>العمل</th>
+    <th>المستوى</th>
+    <th>الأولوية</th>
+    <th>تاريخ التسجيل</th>
+    <th>الحالة</th>
+    <th>تعديل</th>
+    <th>حذف</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in person%}
+    <tr>
+        <td>{{item.person_id}}</td>
+        <td>{{item.type_id}}</td>
+        <td>{{item.first_name}}</td>
+        <td>{{item.last_name}}</td>
+        <td>{{item.father_name}}</td>
+        <td>{{item.bdate|date:'Y'}}</td>
+        <td>{{item.phone_number}}</td>
+        <td>{{item.home_number}}</td>
+        <td>{{item.address}}</td>
+        <td>{{item.job}}</td>
+        <td>{{item.level_id}}</td>
+        <td>{{item.priority_id}}</td>
+        <td>{{item.create_date}}</td>
+        {% if item.status == True%}
+            <td>
+                <div class="d-flex justify-content-center text-success">
+                        <i class="fas fa-unlock"></i>
+                </div>
+            </td>
+        {% else %}
+            <td>
+                <div class="d-flex justify-content-center text-danger">
+                    <i class="fas fa-lock"></i> 
+                </div>
+            </td>
+        {% endif %}
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'edit_person' item.person_id %}" class="btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex justify-content-center">
+                <a href="{% url 'del_person' item.person_id %}" class="btn btn-danger btn-circle btn-sm">
+                    <i class="fas fa-user-times"></i>
+                </a>
+            </div>
+        </td>
+        
+    </tr>
+    {% endfor %}
+{% endblock %}

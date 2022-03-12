@@ -1,0 +1,90 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    الاختبارات
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_exam_excel' %}" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج البيانات لـ Excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block url_1 %}
+    <a type="button" class="m-0 btn btn-success mr-4 my-1" href="{% url 'generate_exam' %}">
+        <i class="fas fa-fw fa-plus-circle"></i>
+        <span>انشاء الاختبارات</span>
+    </a>
+{% endblock %}
+
+{% block th_table %}
+    <th>#</th>
+    <th>الاسم</th>
+    <th>رقم الجلسة</th>
+    <th>المستوى</th>
+    <th>
+        نظري
+        <br>
+        الامتحان الأول
+    </th>
+    <th>
+        نظري
+        <br>
+        التكميلي
+    </th>
+    <th>
+        نظري
+        <br>
+        الاعادة
+    </th>
+    <th>
+        عملي
+        <br>
+        الامتحان الأول
+    </th>
+    <th>
+        عملي
+        <br>
+        التكميلي
+    </th>
+    <th>
+        عملي
+        <br>
+        الاعادة
+    </th>  
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in exam %}
+    <tr>
+        <td>{{item.student_id.person_id}}</td>
+        <td>{{item.student_id}}</td>
+        <td>{{item.session_id.session_number}}</td>
+        <td>{{item.session_id.level_id}}</td>
+        {% for item2 in item.exams %}
+            <td>
+                <input type="number" class="form-control form-control-user" min="0" max="100" value="{{item2.mark}}" id="{{item2.exam_id}}" onchange="set_exam_mark({{item2.exam_id}})">
+            </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    function set_exam_mark(get_exam_id){
+        let exam_id = get_exam_id
+        let exam_value = document.getElementById(get_exam_id).value;
+        $.ajax({
+        url: "{% url 'set_exam_mark' %}",
+        data:{
+            'exam_id': exam_id,
+            'exam_value':exam_value,
+            },
+        dataType: 'json',
+        });
+    };
+</script>
+{% endblock %}

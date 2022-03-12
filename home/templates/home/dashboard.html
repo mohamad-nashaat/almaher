@@ -1,0 +1,139 @@
+{% extends 'base.html'%}
+
+{% block body%}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">لوحة التحكم</h1>
+        <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
+    </div>
+
+    <div class="row mb-4 g-3 align-items-center">
+        <div class="col-auto">
+            <a href="{% url 'select_course' %}" class="btn btn-primary shadow-sm">   
+                <span class="text">اختر دورة</span>
+            </a>
+        </div>
+        <div class="col-auto">
+            <label class="col-form-label text-dark">الدورة الحالية هي: <span class="font-weight-bold">{{get_course_id.course_name}}</span></label>
+        </div>
+    </div>
+    
+    <!-- Content Row -->
+    <div class="row">
+        <h4 class="text-dark mt-4">مجموع الدورات والجلسات</h4>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع الدورات
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{c_course}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع الجلسات في الدورة الحالية</div>
+                            <div class="h5 mb-0  text-gray-800">{{c_session}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع الطلاب في الدورة الحالية</div>
+                            <div class="h5 mb-0  text-gray-800">{{c_session_student}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <h4 class="text-dark mt-4">مجموع الطلاب والمدرسين الكلي</h4>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع المدرسين</div>
+                            <div class="h5 mb-0  text-gray-800">{{ c_teacher }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع الطلاب</div>
+                            <div class="h5 mb-0  text-gray-800">{{ c_student }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class=" font-weight-bold text-primary text-uppercase mb-1">
+                                مجموع المتخرجين</div>
+                            <div class="h5 mb-0  text-gray-800">{{ c_graduate }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

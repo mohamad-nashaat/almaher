@@ -1,0 +1,37 @@
+{% extends 'base_datatables.html'%}
+
+{% block pg_head %}
+    عرض الجلسات
+{% endblock %}
+
+{% block export %}
+
+{% endblock %}
+
+{% block th_table %}
+    <th>رقم الجلسة</th>
+    <th>الدورة</th>
+    <th>المستوى</th>
+    <th>المدرس</th>
+    <th>الاسم</th>
+    <th>الكنية</th>
+    <th>اسم الاب</th>
+    <th>المكان</th>
+    <th>الوقت</th>
+{% endblock %}
+
+{% block tr_table%}
+    {% for item in session_student %} 
+    <tr>
+        <td>{{item.session_id.session_number}}</td>
+        <td>{{item.session_id.course_id}}</td>
+        <td>{{item.session_id.level_id}}</td>
+        <td>{{item.session_id.teacher_id}}</td>
+        <td>{{item.student_id.first_name}}</td>
+        <td>{{item.student_id.last_name}}</td>
+        <td>{{item.student_id.father_name}}</td>
+        <td>{{item.session_id.position_id}}</td>
+        <td>{{item.session_id.time_id}}</td>                   
+    </tr>
+    {% endfor %}
+{% endblock %}

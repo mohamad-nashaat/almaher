@@ -1,0 +1,79 @@
+{% extends 'base_card_dml.html'%}
+
+{% block mess %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-success my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'info'%}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-info my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% elif message.tags == 'error' or message.tags == 'warning' %}
+                <div class="d-flex justify-content-center">
+                    <div class="alert alert-danger my-2 text-center w-25" role="alert">
+                        {{message}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block pg_head %}
+    اختر الحضور
+{% endblock %}
+
+{% block export %}
+<a href="{% url 'export_attendance_student_pdf' %}"  class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج حضور الطلاب Pdf</span>
+    </i>
+</a>
+
+<a href="{% url 'export_attendance_teacher_pdf' %}" class="btn btn-sm btn-primary shadow-sm mb-1 mx-2">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج حضور المدرسين Pdf</span>
+    </i>
+</a>
+
+<a href="{% url 'export_excel_attendance' %}" class="btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white">
+    <span>استخراج الحضور Excel</span>
+    </i>
+</a>
+{% endblock %}
+
+{% block card_header %}
+    <div class="card-header py-3">
+        <a type="button" class="m-0  btn btn-success" href="{% url 'attendance_generater' %}">
+            <i class="fas fa-fw fa-plus-circle"></i>
+            <span>انشاء الحضور</span>
+        </a>            
+    </div>
+{% endblock %}
+
+{% block card_body %}
+    <form action="{% url 'attendance' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+            <div class="mb-3 mb-sm-0">
+                <div class="d-flex justify-content-center">
+                    <select class="form-control form-select w-50" aria-label="Default select example" name="type" id="type" required>
+                        <option value="1">المدرسين</option>
+                        <option value="2">الطلاب</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary w-25">موافق</button>
+        </div>
+    </form>
+{% endblock %}
