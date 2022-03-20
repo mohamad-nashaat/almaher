@@ -19,7 +19,7 @@ urlpatterns = [
     path('wait_list', views.wait_list_session, name='wait_list_session'),
     path('set_teacher', views.set_teacher, name='set_teacher'),
     path('set_student', views.set_student, name='set_student'),
-
+    # Export to files
     path('export/pdf/session/student', views.export_students_session_pdf,
          name='export_students_session_pdf'),
     path('export/pdf/session/teacher', views.export_teacher_session_pdf,
@@ -28,5 +28,4 @@ urlpatterns = [
          name='export_teacher_student_session_pdf'),
     path('export/excel/sessions', views.export_sessions_excel,
          name='export_sessions_excel'),
-
 ]
