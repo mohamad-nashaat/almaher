@@ -224,8 +224,11 @@ def export_excel_attendance(request):
         session_id__in=session_list).values_list('teacher_id', flat=True)
     student = Session_Student.objects.filter(
         session_id__in=session_list).values_list('student_id', flat=True)
-    get_attendance = Attendance.objects.filter(session_id__in=session_list, person_id__in=teacher).distinct(
-        'person_id') | Attendance.objects.filter(session_id__in=session_list, person_id__in=student).distinct('person_id')
+    get_attendance = Attendance.objects.filter(
+        session_id__in=session_list, person_id__in=teacher).select_related(
+            'person_id', 'session_id', 'session_id__level_id').distinct('person_id') | Attendance.objects.filter(
+            session_id__in=session_list, person_id__in=student).select_related(
+                'person_id', 'session_id', 'session_id__level_id').distinct('person_id')
     for all_person in get_attendance:
         status_attendance = Attendance.objects.all().filter(
             person_id=all_person.person_id, session_id__in=session_list).order_by('day')
