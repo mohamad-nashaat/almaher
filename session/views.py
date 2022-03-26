@@ -6,7 +6,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.db.models import Max, Q, Count, Avg, Prefetch, PROTECT
-
 import xlwt
 import tempfile
 from django.template.loader import render_to_string
@@ -28,17 +27,15 @@ from session.tests import generate_sessions
 from attendance.tests import update_attendance
 from course.tests import get_request_session_course_id
 
-# Create your views here.
-
 
 @login_required(login_url='login')
 def session(request):
     get_course_id = get_request_session_course_id(request)
     # Get all sessions
     session = Session.objects.select_related(
-        'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id').prefetch_related('session_student_set').filter(
+        'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id').prefetch_related('sessions', 'sessions__student_id').filter(
             course_id=get_course_id).annotate(
-            student_count=Count('session_student'))
+            student_count=Count('sessions'))
     # Get all sessions that have teacher
     session_list = session.filter(
         ~Q(teacher_id=None)).values_list('session_id', flat=True)
@@ -54,10 +51,13 @@ def session(request):
         # Count students in current session
         c_student = oneSession.student_count
         # Get the avrage for current session
-        get_students_id = oneSession.session_student_set.values_list(
-            'student_id__bdate', flat=True)
+        all_sessions = oneSession.sessions.all()
+        all_bdate = []
+        for person_date in all_sessions:
+            get_date = person_date.student_id.bdate
+            all_bdate.append(get_date)
         avg_date = 0
-        for per in get_students_id:
+        for per in all_bdate:
             if per is not None:
                 bdate = per
                 bdate = bdate.year
@@ -411,7 +411,8 @@ def export_teacher_student_session_pdf(request):
         response['Content-Disposition'] = 'attachment; filename="sessions_data.pdf"'
         response['Content-Transform-Encoding'] = 'binary'
         get_course_id = get_request_session_course_id(request)
-        queryset = Session.objects.select_related('teacher_id', 'level_id', 'position_id', 'time_id').prefetch_related(Prefetch('session_student_set', queryset=Session_Student.objects.select_related('student_id'))).filter(
+        sessions = Session.objects.select_related(
+            'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id').prefetch_related('sessions', 'sessions__student_id').filter(
             course_id=get_course_id).order_by('session_id')
         ### Get previous course and results ###
         """
@@ -429,25 +430,28 @@ def export_teacher_student_session_pdf(request):
             previous_result = previous_result.filter(
                 session_id__in=previous_session_list)
         """
+        """
+        list_stud = []
+        for stud in studensts:
+            if previous_result.filter(student_id=stud.student_id).exists():
+                get_previous_result = previous_result.get(
+                    student_id=stud.student_id)
+                get_result_type = get_previous_result.result_type
+            dic_stud_result = {'student': stud, 'result': get_result_type}
+            list_stud.append(dic_stud_result)
+        dic_session = {'session': s, 'students': list_stud}
+        sessions.append(dic_session)
+        """
         ### End get previous course and results ###
-        sessions = []
-        for s in queryset:
-            studensts = s.session_student_set.all()
-            session_dic = {'session': s, 'studensts': studensts}
-            sessions.append(session_dic)
-            """
-            list_stud = []
-            for stud in studensts:
-                if previous_result.filter(student_id=stud.student_id).exists():
-                    get_previous_result = previous_result.get(
-                        student_id=stud.student_id)
-                    get_result_type = get_previous_result.result_type
-                dic_stud_result = {'student': stud, 'result': get_result_type}
-                list_stud.append(dic_stud_result)
-            dic_session = {'session': s, 'students': list_stud}
-            sessions.append(dic_session)
-            """
-        context = {'sessions': sessions,
+        all_sessions = []
+        for session in sessions:
+            get_students = session.sessions.all()
+            dictionary_session = {
+                'session': session,
+                'students': get_students
+            }
+            all_sessions.append(dictionary_session)
+        context = {'sessions': all_sessions,
                    'course_name': get_course_id.course_name,
                    }
         html_string = render_to_string(

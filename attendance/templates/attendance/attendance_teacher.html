@@ -1,19 +1,19 @@
 {% extends 'base_datatables.html'%}
-
+<!--Start block message-->
 {% block mess %}
     {% if messages %}
-    {% for message in messages %}
-    {% if message.tags %}
-    <div class="d-flex justify-content-center">
-        <div class="alert alert-success my-2 text-center w-25" role="alert">
-            {{message}}
-        </div>
-    </div>
-    {% endif %}
-    {% endfor %}
+            {% for message in messages %}
+                {% if message.tags %}
+                    <div class="d-flex justify-content-center">
+                        <div class="alert alert-success my-2 text-center w-25" role="alert">
+                            {{message}}
+                        </div>
+                    </div>
+            {% endif %}
+        {% endfor %}
     {% endif %}
 {% endblock %}
-
+<!--End block message-->
 {% block pg_head %}
     حضور المدرسين
 {% endblock %}
@@ -28,31 +28,31 @@
 {% endblock %}
 
 {% block tr_table%}
-    {% for item in attendance %}
+    {% for item in attendances %}
     <tr>
-        <td>{{item.session_number}}</td>
-        <td>{{item.first_name}}</td>
-        <td>{{item.last_name}}</td>
-        <!--Get studet _d then list status day-->
-        {% for day, id in item.zip_id_day %}
-                {% if day == True %}
-                    <td>
-                        <div class="form-check">
-                            <div class="d-flex justify-content-center">
-                                <input class="form-check-input" onclick="to_false({{id}})" type="checkbox" value="" checked>
-                            </div>
+        <td>{{item.session_num}}</td>
+        <td>{{item.person.first_name}}</td>
+        <td>{{item.person.last_name}}</td>
+        <!--Get attendances-->
+        {% for item2 in item.attendance %}
+            {% if item2.status == True %}
+                <td>
+                    <div class="form-check">
+                        <div class="d-flex justify-content-center">
+                            <input class="form-check-input" onclick="to_false({{item2.attendance_id}})" type="checkbox" value="" checked>
                         </div>
-                    </td>
-                {% else %}
-                    <td>
-                        <div class="form-check">
-                            <div class="d-flex justify-content-center">
-                                <input class="form-check-input" onclick="to_true({{id}})" type="checkbox" value="">
-                            </div>
+                    </div>
+                </td>
+            {% else %}
+                <td>
+                    <div class="form-check">
+                        <div class="d-flex justify-content-center">
+                            <input class="form-check-input" onclick="to_true({{item2.attendance_id}})" type="checkbox" value="">
                         </div>
-                        </a>
-                    </td>
-                {% endif %}
+                    </div>
+                    </a>
+                </td>
+            {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}
