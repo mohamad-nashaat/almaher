@@ -5,8 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
-from django.db.models import Max
-from django.db.models import Q
+from django.db.models import Max, Q, Prefetch
 import xlwt
 import tempfile
 from django.template.loader import render_to_string
@@ -24,8 +23,6 @@ from result.models import Result
 from attendance.models import Attendance
 
 from course.tests import get_request_session_course_id
-
-# Create your views here.
 
 
 @login_required(login_url='login')
@@ -107,26 +104,34 @@ def attendance_generater(request):
 @login_required(login_url='login')
 def attendance_teacher(request):
     get_course_id = get_request_session_course_id(request)
-    # Get all teachers
     session = Session.objects.filter(course_id=get_course_id)
-    teacher = session.values_list('teacher_id', flat=True)
-    session_list = session.values_list('session_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=teacher,
-                                                     session_id__in=session_list).values_list('day', flat=True).order_by('day').distinct()
-    get_attendance = Attendance.objects.all().filter(
-        person_id__in=teacher, session_id__in=session_list).distinct('person_id')
-    attendance = []
-    for all_person in get_attendance:
-        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id,
-                                                            session_id__in=session_list).values_list('status', flat=True).order_by('day')
-        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id,
-                                                        session_id__in=session_list).values_list('attendance_id', flat=True).order_by('day')
-        zip_id_day = zip(status_attendance, id_attendance)
-        dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number,
-                          'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
-        attendance.append(dic_attendance)
+    sessions = session.values_list('session_id', flat=True)
+    persons = session.values_list('teacher_id', flat=True)
+    persons = Person.objects.filter(
+        pk__in=persons).prefetch_related(
+            Prefetch(
+                'persons_attendance', queryset=Attendance.objects.filter(
+                    session_id__in=sessions).order_by('day').select_related('session_id')
+            ),
+            Prefetch(
+                'teachers', queryset=Session.objects.filter(pk__in=sessions, teacher_id__in=persons))
+    )
+    day_attendance = Attendance.objects.all().filter(person_id__in=persons,
+                                                     session_id__in=sessions).values_list('day', flat=True).order_by('day').distinct()
+    attendances = []
+    for person in persons:
+        session_num = person.teachers.all()
+        session_num = list(session_num)
+        session_num = session_num[0].session_number
+        attendance = person.persons_attendance.all()
+        dic_attendance = {
+            'person': person,
+            'session_num': session_num,
+            'attendance': attendance
+        }
+        attendances.append(dic_attendance)
     context = {'day_attendance': day_attendance,
-               'attendance': attendance,
+               'attendances': attendances,
                'get_course_id': get_course_id,
                }
     return render(request, 'attendance/attendance_teacher.html', context)
@@ -135,26 +140,36 @@ def attendance_teacher(request):
 @login_required(login_url='login')
 def attendance_student(request):
     get_course_id = get_request_session_course_id(request)
-    session = Session.objects.all().filter(course_id=get_course_id)
-    session_list = session.values_list('session_id', flat=True)
-    student = Session_Student.objects.filter(
-        session_id__in=session_list).values_list('student_id', flat=True)
-    day_attendance = Attendance.objects.all().filter(person_id__in=student,
-                                                     session_id__in=session_list).values_list('day', flat=True).order_by('day').distinct()
-    get_attendance = Attendance.objects.all().filter(
-        person_id__in=student, session_id__in=session_list).distinct('person_id')
-    attendance = []
-    for all_person in get_attendance:
-        status_attendance = Attendance.objects.all().filter(person_id=all_person.person_id,
-                                                            session_id__in=session_list).values_list('status', flat=True).order_by('day')
-        id_attendance = Attendance.objects.all().filter(person_id=all_person.person_id,
-                                                        session_id__in=session_list).values_list('attendance_id', flat=True).order_by('day')
-        zip_id_day = zip(status_attendance, id_attendance)
-        dic_attendance = {'person_id': all_person.person_id, 'session_number': all_person.session_id.session_number,
-                          'first_name': all_person.person_id.first_name, 'last_name': all_person.person_id.last_name, 'zip_id_day': zip_id_day}
-        attendance.append(dic_attendance)
+    session = Session.objects.filter(course_id=get_course_id)
+    sessions = session.values_list('session_id', flat=True)
+    persons = Session_Student.objects.filter(
+        session_id__in=sessions).values_list('student_id', flat=True)
+    persons = Person.objects.filter(
+        pk__in=persons).prefetch_related(
+            Prefetch(
+                'persons_attendance', queryset=Attendance.objects.filter(
+                    session_id__in=sessions).order_by('day').select_related('session_id')
+            ),
+            Prefetch(
+                'students', queryset=Session_Student.objects.filter(session_id__in=sessions,
+                                                                    student_id__in=persons).select_related('session_id'))
+    )
+    day_attendance = Attendance.objects.all().filter(person_id__in=persons,
+                                                     session_id__in=sessions).values_list('day', flat=True).order_by('day').distinct()
+    attendances = []
+    for person in persons:
+        session_num = person.students.all()
+        session_num = list(session_num)
+        session_num = session_num[0].session_id.session_number
+        attendance = person.persons_attendance.all()
+        dic_attendance = {
+            'person': person,
+            'session_num': session_num,
+            'attendance': attendance
+        }
+        attendances.append(dic_attendance)
     context = {'day_attendance': day_attendance,
-               'attendance': attendance,
+               'attendances': attendances,
                'get_course_id': get_course_id,
                }
     return render(request, 'attendance/attendance_student.html', context)
