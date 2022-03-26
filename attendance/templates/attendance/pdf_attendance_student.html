@@ -81,11 +81,11 @@
   <body>
         {% for item in last_session %}
         <div class="clear">
-            <div id="col1">رقم الدرس: {{item.teach.session_number}}</div>
-            <div id="col1">المدرس: {{item.teach.teacher_id}}</div>
-            <div id="col1">المستوى: {{item.teach.level_id}}</div>
-            <div id="col1">المكان: {{item.teach.position_id}}</div>
-            <div id="col1">التوقيت: {{item.teach.time_id}}</div>
+            <div id="col1">رقم الدرس: {{item.session.session_number}}</div>
+            <div id="col1">المدرس: {{item.session.teacher_id}}</div>
+            <div id="col1">المستوى: {{item.session.level_id}}</div>
+            <div id="col1">المكان: {{item.session.position_id}}</div>
+            <div id="col1">التوقيت: {{item.session.time_id}}</div>
         </div>
 
         <table>
@@ -98,7 +98,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item2 in item.stud %}
+                {% for item2 in item.student %}
                     <tr>
                         <td>{{item2.student.student_id}}</td>
                         {% for item3 in item2.attendance %}

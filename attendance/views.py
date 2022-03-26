@@ -282,16 +282,16 @@ def export_attendance_student_pdf(request):
         response['Content-Disposition'] = 'attachment; filename="attendance_student.pdf"'
         response['Content-Transform-Encoding'] = 'binary'
         get_course_id = get_request_session_course_id(request)
-        session = Session.objects.filter(
-            course_id=get_course_id).order_by('session_id')
-        session_list = session.values_list('session_id', flat=True)
-        # Check if any student is not in attendance
+        sessions = Session.objects.filter(
+            course_id=get_course_id).order_by('session_id').select_related(
+            'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id').prefetch_related('sessions', 'sessions__student_id')
+        session_list = sessions.values_list('session_id', flat=True)
+        # Check if attendance is 0
         chk_attendance = Attendance.objects.filter(
             session_id__in=session_list).distinct('person_id').count()
         if chk_attendance == 0:
             messages.error(request, 'الرجاء انشاء الحضور اولا')
             return HttpResponseRedirect(reverse('attendance'))
-        c_session = session.count()
         day = Attendance.objects.filter(session_id__in=session_list).order_by(
             'day').distinct('day').values_list('day', flat=True)
         new_day = []
@@ -304,20 +304,18 @@ def export_attendance_student_pdf(request):
             elif len(new_day) == 14:
                 new_day.append('تقييم 3')
         day = new_day
-        # End check
+        # Get session number
         num_of_session = get_course_id.num_of_session
         num_of_session_list = []
         for i in range(num_of_session):
             num_of_session_list.append(i)
-        ###
         last_session = []
-        for s in session:
-            get_session_students = Session_Student.objects.filter(
-                session_id=s.session_id)
-            list_stud = []
-            for stud in get_session_students:
+        for session in sessions:
+            get_session_students = session.sessions.all()
+            list_students = []
+            for student in get_session_students:
                 get_attendance = Attendance.objects.filter(
-                    session_id__in=session_list, person_id=stud.student_id).order_by('day')
+                    session_id__in=session_list, person_id=student.student_id).order_by('day')
                 new_attend = []
                 for atend in get_attendance:
                     new_attend.append(atend)
@@ -327,12 +325,11 @@ def export_attendance_student_pdf(request):
                         new_attend.append('')
                     elif len(new_attend) == 14:
                         new_attend.append('')
-                #dic_stud = {'student': stud, 'attendance': get_attendance}
-                dic_stud = {'student': stud, 'attendance': new_attend}
-                list_stud.append(dic_stud)
-            dic_stud_teach = {'teach': s, 'stud': list_stud}
-            last_session.append(dic_stud_teach)
-        ###
+                dic_student = {'student': student, 'attendance': new_attend}
+                list_students.append(dic_student)
+            dic_sessions_students = {
+                'session': session, 'student': list_students}
+            last_session.append(dic_sessions_students)
         context = {'last_session': last_session,
                    'num_of_session_list': num_of_session_list,
                    'course_name': get_course_id.course_name,
@@ -357,17 +354,16 @@ def export_attendance_teacher_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="attendance_teacher.pdf"'
     response['Content-Transform-Encoding'] = 'binary'
     get_course_id = get_request_session_course_id(request)
-    session = Session.objects.filter(
-        course_id=get_course_id).order_by('session_id')
-    session_list = session.values_list('session_id', flat=True)
-    # Check if any student is not in attendance
+    sessions = Session.objects.filter(
+        course_id=get_course_id).order_by('session_id').select_related(
+        'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id')
+    session_list = sessions.values_list('session_id', flat=True)
+    # Check if attendance is 0
     chk_attendance = Attendance.objects.filter(
         session_id__in=session_list).distinct('person_id').count()
     if chk_attendance == 0:
         messages.error(request, 'الرجاء انشاء الحضور اولا')
         return HttpResponseRedirect(reverse('attendance'))
-    c_session = session.count()
-    # End check
     day = Attendance.objects.filter(session_id__in=session_list).order_by(
         'day').distinct('day').values_list('day', flat=True)
     teacher = Session.objects.filter(session_id__in=session_list).order_by(
@@ -380,7 +376,6 @@ def export_attendance_teacher_pdf(request):
             person_id=all_person.person_id, session_id__in=session_list).order_by('day')
         dic_teacher = {'teacher': all_person, 'attendance': status_attendance}
         last_attendance.append(dic_teacher)
-    ###
     context = {'day': day,
                'last_attendance': last_attendance,
                'course_name': get_course_id.course_name,
