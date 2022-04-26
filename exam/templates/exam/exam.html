@@ -59,8 +59,8 @@
 {% block tr_table%}
     {% for item in exam %}
     <tr>
-        <td>{{item.student_id.person_id}}</td>
         <td>{{item.student_id}}</td>
+        <td>{{item.student_name}}</td>
         <td>{{item.session_id.session_number}}</td>
         <td>{{item.session_id.level_id}}</td>
         {% for item2 in item.exams %}

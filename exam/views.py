@@ -5,8 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
-from django.db.models import Max
-from django.db.models import Q
+from django.db.models import Q, Max, Prefetch
 import xlwt
 import tempfile
 from django.template.loader import render_to_string
@@ -22,10 +21,7 @@ from session.models import Session, Session_Student
 from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
-
 from course.tests import get_request_session_course_id
-
-# Create your views here.
 
 
 @login_required(login_url='login')
@@ -35,20 +31,19 @@ def exam(request):
         course_id=get_course_id).values_list('session_id', flat=True)
     get_exam = Exam.objects.filter(session_id__in=in_session)
     student_exam = get_exam.values_list('student_id', flat=True).distinct()
-    exam = []
-    for all_person in student_exam:
-        first_exam = get_exam.filter(student_id=all_person).first()
-        all_exam = get_exam.filter(student_id=all_person).values(
-            'exam_id', 'type_id', 'time_id', 'mark').order_by('exam_id')
-        dic_exam = {'student_id': first_exam.student_id,
-                    'session_id': first_exam.session_id, 'exams': all_exam}
-        exam.append(dic_exam)
-    context = {'exam': exam,
+    last_exam = []
+    exams = Person.objects.filter(
+        pk__in=student_exam).prefetch_related(Prefetch('exam_set', queryset=Exam.objects.filter(session_id__in=in_session).order_by('exam_id').select_related(
+            'session_id', 'student_id', 'session_id__level_id')))
+    for exam in exams:
+        all_exam = exam.exam_set.all()
+        dic_exam = {'student_name': all_exam[0].student_id, 'student_id': all_exam[0].student_id.person_id,
+                    'session_id': all_exam[0].session_id, 'exams': all_exam}
+        last_exam.append(dic_exam)
+    context = {'exam': last_exam,
                'get_course_id': get_course_id,
                }
     return render(request, 'exam/exam.html', context)
-
-# Generate exam for all students
 
 
 @login_required(login_url='login')
