@@ -127,22 +127,27 @@ def export_exam_excel(request):
         course_id=get_course_id).values_list('session_id', flat=True)
     get_exam = Exam.objects.filter(session_id__in=in_session)
     student_exam = get_exam.values_list('student_id', flat=True).distinct()
-    exam = []
-    for all_person in student_exam:
-        first_exam = get_exam.filter(student_id=all_person).first()
-        all_exam = get_exam.filter(student_id=all_person).values_list(
-            'mark', flat=True).order_by('exam_id')
-        dic_exam = {'student_id': first_exam.student_id,
-                    'session_id': first_exam.session_id, 'exams': all_exam}
-        exam.append(dic_exam)
-    print(exam)
-    for l_exam in exam:
-        id = str(l_exam['student_id'].person_id)
-        fname = str(l_exam['student_id'].first_name)
-        lname = str(l_exam['student_id'].last_name)
-        course = str(l_exam['session_id'].course_id)
-        level = str(l_exam['session_id'].level_id)
-        session = str(l_exam['session_id'].session_number)
+    last_exam = []
+    exams = Person.objects.filter(
+        pk__in=student_exam).prefetch_related(Prefetch('exam_set', queryset=Exam.objects.filter(session_id__in=in_session).order_by('exam_id').select_related(
+            'session_id', 'student_id', 'session_id__level_id', 'session_id__course_id')))
+    for exam in exams:
+        all_exam = exam.exam_set.all()
+        dic_exam = {'person_id': all_exam[0].student_id.person_id,
+                    'first_name': all_exam[0].student_id.first_name,
+                    'last_name': all_exam[0].student_id.last_name,
+                    'course_id': all_exam[0].session_id.course_id,
+                    'level_id': all_exam[0].session_id.level_id,
+                    'session_number': all_exam[0].session_id.session_number,
+                    'exams': all_exam}
+        last_exam.append(dic_exam)
+    for l_exam in last_exam:
+        id = str(l_exam['person_id'])
+        fname = str(l_exam['first_name'])
+        lname = str(l_exam['last_name'])
+        course = str(l_exam['course_id'])
+        level = str(l_exam['level_id'])
+        session = str(l_exam['session_number'])
         vlues = [id, fname, lname, course, level, session]
         for mark in l_exam['exams']:
             vlues.append(str(mark))
