@@ -22,10 +22,7 @@ from session.models import Session, Session_Student
 from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
-
 from course.tests import get_request_session_course_id
-
-# Create your views here.
 
 
 @login_required(login_url='login')
@@ -33,7 +30,9 @@ def result(request):
     get_course_id = get_request_session_course_id(request)
     in_session = Session.objects.filter(
         course_id=get_course_id).values_list('session_id', flat=True)
-    result = Result.objects.filter(session_id__in=in_session)
+    result = Result.objects.filter(
+        session_id__in=in_session).select_related(
+            'student_id', 'session_id', 'session_id__course_id', 'session_id__level_id')
     context = {'result': result,
                'get_course_id': get_course_id,
                }
