@@ -248,7 +248,9 @@ def export_result_excel(request):
     get_course_id = get_request_session_course_id(request)
     in_session = Session.objects.filter(
         course_id=get_course_id).values_list('session_id', flat=True)
-    result = Result.objects.filter(session_id__in=in_session)
+    result = Result.objects.filter(
+        session_id__in=in_session).select_related(
+            'student_id', 'session_id', 'session_id__course_id', 'session_id__level_id')
     for l_result in result:
         id = str(l_result.student_id.person_id)
         fname = str(l_result.student_id.first_name)
