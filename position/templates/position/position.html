@@ -11,7 +11,6 @@
 {% endblock %} {% block th_table %}
 <th>المكان</th>
 <th></th>
-<th></th>
 {% endblock %} {% block tr_table%} {% for item in position%}
 <tr>
   <td>{{item.position_name}}</td>
@@ -20,63 +19,6 @@
       <a href="" class="btn btn-info btn-circle btn-sm">
         <i class="fas fa-edit"></i>
       </a>
-    </div>
-  </td>
-  <td>
-    <div class="d-flex justify-content-center">
-      <a
-        href="#"
-        data-toggle="modal"
-        data-target="#deleteModal{{ forloop.counter }}"
-        class="btn btn-danger btn-circle btn-sm"
-      >
-        <i class="fas fa-times"></i>
-      </a>
-      <!--Confirmation popup-->
-      <div
-        class="modal fade"
-        id="deleteModal{{ forloop.counter }}"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">
-                هل أنت متأكد من حذف هذا العنصر؟
-              </h5>
-              <button
-                class="close"
-                type="button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              اختر حذف اذا كنت متأكد من حذف هذا العنصر `{{item.position_name}}`
-            </div>
-            <div class="modal-footer">
-              <button
-                class="btn btn-secondary"
-                type="button"
-                data-dismiss="modal"
-              >
-                الغاء
-              </button>
-              <a
-                class="btn btn-danger"
-                href="{% url 'del_position' item.position_name %}"
-                >حذف</a
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--End Confirmation popup-->
     </div>
   </td>
 </tr>
