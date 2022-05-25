@@ -23,8 +23,6 @@ from exam.models import Exam
 from result.models import Result
 from attendance.models import Attendance
 
-# Create your views here.
-
 
 @login_required(login_url='login')
 def course(request):
@@ -59,15 +57,15 @@ def add_course(request):
     return render(request, 'course/add_course.html', context)
 
 
-@login_required(login_url='login')
-def del_course(request, pk):
-    if request.user.is_staff:
-        get_course = Course.objects.get(pk=pk)
-        get_course.delete()
-        messages.success(request, 'تم الحذف بنجاح')
-        return redirect('course')
-    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
-    return redirect('course')
+# @login_required(login_url='login')
+# def del_course(request, pk):
+#     if request.user.is_staff:
+#         get_course = Course.objects.get(pk=pk)
+#         get_course.delete()
+#         messages.success(request, 'تم الحذف بنجاح')
+#         return redirect('course')
+#     messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
+#     return redirect('course')
 
 
 @login_required(login_url='login')
