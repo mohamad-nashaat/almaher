@@ -16,8 +16,6 @@ from weasyprint.fonts import FontConfiguration
 from level.models import Level
 
 
-# Create your views here.
-
 @login_required(login_url='login')
 def level(request):
     level = Level.objects.all().order_by('level_id')
@@ -42,12 +40,12 @@ def add_level(request):
     context = {}
     return render(request, 'level/add_level.html', context)
 
-@login_required(login_url='login')
-def del_level(request, pk):
-    if request.user.is_staff:
-        get_level = Level.objects.get(pk=pk)
-        get_level.delete()
-        messages.success(request, 'تم الحذف بنجاح')
-        return redirect('level')
-    messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
-    return redirect('level')
+# @login_required(login_url='login')
+# def del_level(request, pk):
+#     if request.user.is_staff:
+#         get_level = Level.objects.get(pk=pk)
+#         get_level.delete()
+#         messages.success(request, 'تم الحذف بنجاح')
+#         return redirect('level')
+#     messages.warning(request, 'ليس لديك صلاحية للقيام بهذه العملية')
+#     return redirect('level')
