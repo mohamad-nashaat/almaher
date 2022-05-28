@@ -1,0 +1,117 @@
+{% extends 'base.html'%}
+
+{% block body%}
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="d-flex justify-content-center">
+        <div class="alert alert-success my-2 text-center w-25" role="alert">
+            {{message}}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">سجلات المدرس</h1>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2">
+            <div class="form-group row my-2"></div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الدورة</th>
+                            <th>المستوى</th>
+                            <th>رقم الجلسة</th>
+                            <th>المكان</th>
+                            <th>الفترة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for teacher in teachers %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{teacher.teacher_id}}</td>
+                            <td>{{teacher.course_id}}</td>
+                            <td>{{teacher.level_id}}</td>
+                            <td>{{teacher.session_number}}</td>
+                            <td>{{teacher.position_id}}</td>
+                            <td>{{teacher.time_id}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">سجلات الطالب</h1>
+    </div>
+
+    <!-- Second table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-2">
+            <div class="form-group row my-2"></div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الدورة</th>
+                            <th>المستوى</th>
+                            <th>رقم الجلسة</th>
+                            <th>المكان</th>
+                            <th>الفترة</th>
+                            <th>نتيجة النظري</th>
+                            <th>نتيجة العملي</th>
+                            <th>المحصلة</th>
+                            <th>النتيجة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{student.student_id}}</td>
+                            <td>{{student.session_id.course_id}}</td>
+                            <td>{{student.session_id.level_id}}</td>
+                            <td>{{student.session_id.session_number}}</td>
+                            <td>{{student.session_id.position_id}}</td>
+                            <td>{{student.session_id.time_id}}</td>
+                            <td>{{student.theoretical_mark}}</td>
+                            <td>{{student.practical_mark}}</td>
+                            <td>{{student.result}}</td>
+                            <td>{{student.result_type}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javaScript %}
+<script>
+    $(document).ready(function() {
+        $('table.display').DataTable();
+    } );
+</script>
+{% endblock %}

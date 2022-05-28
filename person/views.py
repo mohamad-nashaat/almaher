@@ -77,7 +77,49 @@ def del_person(request, pk):
                }
     return render(request, 'person/del_person.html', context)
 
-# Wait List
+
+@login_required(login_url='login')
+def registers(request, pk):
+    courses = Course.objects.all().order_by('course_id')
+    # Teachers section
+    # Array for teacher
+    teachers = []
+    # Check before query the Session
+    for course in courses:
+        session = Session.objects.filter(
+            course_id=course.course_id, teacher_id=pk)
+        # Check if exists or not
+        if session.exists():
+            session = Session.objects.select_related(
+                'course_id', 'level_id', 'position_id', 'time_id', 'teacher_id').get(course_id=course.course_id, teacher_id=pk)
+            teachers.append(session)
+
+    # Studens section
+    # Array for student
+    students = []
+    # Check Check before query the Session_Student
+    for course in courses:
+        sessions = Session.objects.filter(
+            course_id=course.course_id).values_list('session_id')
+        student_session = Session_Student.objects.filter(
+            session_id__in=sessions, student_id=pk)
+        # Check if exists or not
+        if student_session.exists():
+            student_session = Session_Student.objects.get(
+                session_id__in=sessions, student_id=pk)
+            # .select_related(
+            #    'session_id','session_id.course_id', 'session_id.level_id', 'session_id.position_id', 'session_id.time_id', 'session_id.teacher_id')
+            result = Result.objects.filter(
+                session_id=student_session.session_id, student_id=pk)
+            # Check if exists or not
+            if result.exists():
+                result = Result.objects.select_related(
+                    'student_id', 'session_id', 'session_id__course_id', 'session_id__level_id', 'session_id__position_id', 'session_id__time_id').get(session_id=student_session.session_id, student_id=pk)
+                students.append(result)
+    context = {'teachers': teachers,
+               'students': students,
+               }
+    return render(request, 'person/registers.html', context)
 
 
 @login_required(login_url='login')

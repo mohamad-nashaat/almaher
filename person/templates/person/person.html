@@ -32,9 +32,13 @@
 {% endblock %}
 
 {% block tr_table%}
-    {% for item in person%}
+    {% for item in person %}
     <tr>
-        <td>{{item.person_id}}</td>
+        <td>
+            <a href="{% url 'registers' item.person_id %}" >
+                <i>{{item.person_id}}</i>
+            </a>
+        </td>
         <td>{{item.type_id}}</td>
         <td>{{item.first_name}}</td>
         <td>{{item.last_name}}</td>
